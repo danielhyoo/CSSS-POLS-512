@@ -8,7 +8,7 @@ subtitle: Cointegration Analysis
 
 # Cointegration Analysis
 
-So far, we have been examining a single time series with covariates (e.g. traffic accidents and seat belt law). This assumes that there is no feedback between variables.\newline
+So far, we have been examining a single time series conditional upon some covariates (e.g. traffic accidents and seat belt law). We have been assuming that there is no feedback between variables.\newline
 
 Yet, we may be interested in the relationship between two potentially nonstationary time series that influence each other. \newline
 
@@ -49,7 +49,7 @@ Examples of cointegrated time series:
 
 3. demand for money, interest rates, income, and prices
 
-Justification:
+\textit{Justification}:
 
 Differencing nonstationary time series eliminates the possibility of capturing long run relationships. However, ignoring nonstationarity can uncover spurious relationships. 
 
@@ -104,7 +104,7 @@ Estimate the Error Correction Model
 
 $$\Delta y_t = \psi_0 + \gamma_1\hat{\epsilon}_{t-1}+\sum^J_{j=1}\psi_{1j}\Delta x_{t-j}+\sum^K_{k=1}\psi_{2k}\Delta y_{t-k} + u_t$$
 $$\Delta x_t = \zeta_0 + \gamma_2\hat{\epsilon}_{t-1}+\sum^J_{j=1}\zeta_{1j}\Delta y_{t-j}+\sum^K_{k=1}\zeta_{2k}\Delta x_{t-k} + v_t$$
-The key terms to note at are the $\hat{\epsilon_t}$ from our previous step.
+The key terms to note at are the $\hat{\epsilon}_{t-1}$ from our previous step.
 
 This gives us $\Delta y_t$ as a function of its lags, the lags of $\Delta x_t$, and the error of the long-run equilibrium, $\epsilon_{t-1}$.
 

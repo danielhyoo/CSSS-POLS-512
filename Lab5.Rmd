@@ -20,52 +20,73 @@ subtitle: Panel Data Models with Few Time Periods
 
 # Nickell bias
 
-Recall that we can remove fixed effects by differencing the model (different from first differencing)
+Recall that we can remove fixed effects by differencing (different from first differencing):
 
-This is the within estimator
+$$y_{it}= \phi y_{it-1} + \alpha_i + \epsilon_{it}$$
+$$y_{it} - \bar{y_i} = \phi(y_{it-1} - \bar{y_i})+(x_{it}-\bar{x}_{it})\beta+(\epsilon_{it}-\bar{\epsilon}_{it})$$ 
 
-Alternatively we can estimate a set of dummies
 
-# Nickell bias
+This is the ``within'' estimator or fixed effects model. \newline
 
-However, when we difference the model, we introduce bias.
-
-this is because the mean of y is computed as all the past ys. this is correlated with the mean of epsilon which is computed as all the past epsilons.
-
-the estimates are biased and inconsistent. specifically, this creates bias in the LDV. also, if the regressors are correlated with the LDV, then their coefficients may be seriously biased also.
-
-increasing N does not mitigate the problem. purging serial correlation in the errors or getting the specification right also doesn't solve the problem.
+Alternatively, we can include dummy variables for each group.
 
 # Nickell bias
 
-the degree of bias is order 1/T, so for small T it is big
+However, we introduce bias when we difference the model in this way.
 
-the bias increases as beta decreases
-small t increases the bias
-bias increases as phi increases
+$$y_{it} - \bar{y_i} = \phi(y_{it-1} - \bar{y_i})+(x_{it}-\bar{x}_{it})\beta+(\epsilon_{it}-\bar{\epsilon}_{it})$$ 
 
-small n doesn't matter
-small T is the problem
+This is because $\bar{y}_i$ is computed using all the past $y$'s. This is correlated with $\bar{\epsilon}_{it}$, which is computed using all the past $\epsilon$'s \newline
+
+Specifically, this creates bias in the LDV (think conditional mean zero assumption). If the other regressors are correlated with the LDV, then their coefficients may also be seriously biased. \newline
+
+# Nickell bias
+
+The degree of bias is order 1/T, so it is big for small T. \newline
+
+Furthermore, 
+
+  + The bias increases as $\beta$ decreases \bigskip
+
+  + The bias increases as $\phi$ increases \bigskip
+
+  + Small $N$ is not the problem. Small T is the problem \bigskip
+
+Increasing $N$ does not mitigate the problem. Purging serial correlation in the errors or getting the specification right (including other regressors) also doesn't solve the problem.
 
 # Dynamic panel data models
 
-we turn to instrumental variables.
+We therefore turn to instrumental variables. 
+ 
+Recall that an instrumental variable must fulfill two conditions: 1) it is correlated with $x$ (relevance); 2) it is uncorrelated with $\epsilon$ (exogeneity). It must influence $y$ only through $x$. 
 
-since x and e are correlated, we need to find some instrument that is correlated with x but not e.
+$$y_{it} - \bar{y_i} = \phi(y_{it-1} - \bar{y_i})+(x_{it}-\bar{x}_{it})\beta+(\epsilon_{it}-\bar{\epsilon}_{it})$$ 
+$$\Delta y_{it} = \phi \Delta y_{it-1} + \Delta x_{it}\beta + \Delta \epsilon_{it}$$
 
-we use lagged levels and lagged differences of the change in y. these help to predict the change in y but not the change in epsilon if it is iid.
+We use lagged levels and lagged differences of $\Delta y_{it}$ as instruments for the LDV. These help to predict $\Delta y_{it}$ but not $\Delta \epsilon_{it}$ if the errors are iid (see lecture slides for why). 
 
-see lecture slides for why lagged levels and differences are instruments.
-
-note: this is different than instrumenting an explanatory variable of interest. should not be conflated with other forms of IV regression.
+Note: This is different than instrumenting $x_{it}$. We are not addressing the endogeneity that may exist there. One should not be conflated with the other.
 
 # Dynamic panel data models
 
-estimation is with GMM because usual IV regression can't handle the many instruments
+Estimation is done using GMM.
 
-GMM: use iterative search to find the betas and phis.
+$$y_t = \boldsymbol{x}_t\boldsymbol{\beta} + e_t$$
+$$E[\boldsymbol{x}_t\epsilon_t]=0$$
+$$E[\boldsymbol{z}_t\epsilon_t] = E[\boldsymbol{z}_t(y_t-\boldsymbol{x}_t\boldsymbol{\beta})]=0$$
+$$\frac{1}{n}\sum^n_{t=1}\boldsymbol{z}_t(y-\boldsymbol{x_t}\boldsymbol{\beta})$$
 
-Arellano-Bond Difference gMM uses changes in y as outcome and all available lagged levels as instruments in each period
+$$\boldsymbol{S}_{zy}-\boldsymbol{S}_{zx}\boldsymbol{\beta}=0$$
+$$\boldsymbol{S}_{xy}=n^{-1}\sum^n_{t=1}\boldsymbol{x}_t y_{t} \; \text{and} \; \boldsymbol{S}_{zx}=n^{-1}\sum^n_{t=1}\boldsymbol{z}_t x_{t}$$
+$$\substack{\frac{1}{n}\sum^n_{t=1}z_{1t}(y-\boldsymbol{x}_t \boldsymbol{\beta})\\
+\vdots\\
+\frac{1}{n}\sum^n_{t=1}z_{Kt}(y-\boldsymbol{x}_t \boldsymbol{\beta})
+}$$
+Can be solved analytically. But can use iterative search to find the betas and phis.
+
+Anderson-Hsiao: uses the twice and third lagged levels as instruments.
+
+Arellano-Bond Difference GMM uses changes in y as outcome and all available lagged levels as instruments in each period
 
 Arellano-Bover/Blundell-Bond system GMM adds the available lagged differences
 
