@@ -8,6 +8,66 @@ subtitle: Panel Data Models with Few Time Periods
 
 # Agenda
 
+1. Review of Nickell bias, dynamic panel data models, and GMM \newline
+
+2. Fixed effect and random effects models \newline
+
+3. Estimating dynamic panel data models \newline
+
+4. Simulating conditional forecasts \newline
+
+5. Plotting the results \newline
+
+# Nickell bias
+
+Recall that we can remove fixed effects by differencing the model (different from first differencing)
+
+This is the within estimator
+
+Alternatively we can estimate a set of dummies
+
+# Nickell bias
+
+However, when we difference the model, we introduce bias.
+
+this is because the mean of y is computed as all the past ys. this is correlated with the mean of epsilon which is computed as all the past epsilons.
+
+the estimates are biased and inconsistent. specifically, this creates bias in the LDV. also, if the regressors are correlated with the LDV, then their coefficients may be seriously biased also.
+
+increasing N does not mitigate the problem. purging serial correlation in the errors or getting the specification right also doesn't solve the problem.
+
+# Nickell bias
+
+the degree of bias is order 1/T, so for small T it is big
+
+the bias increases as beta decreases
+small t increases the bias
+bias increases as phi increases
+
+small n doesn't matter
+small T is the problem
+
+# Dynamic panel data models
+
+we turn to instrumental variables.
+
+since x and e are correlated, we need to find some instrument that is correlated with x but not e.
+
+we use lagged levels and lagged differences of the change in y. these help to predict the change in y but not the change in epsilon if it is iid.
+
+see lecture slides for why lagged levels and differences are instruments.
+
+note: this is different than instrumenting an explanatory variable of interest. should not be conflated with other forms of IV regression.
+
+# Dynamic panel data models
+
+estimation is with GMM because usual IV regression can't handle the many instruments
+
+GMM: use iterative search to find the betas and phis.
+
+Arellano-Bond Difference gMM uses changes in y as outcome and all available lagged levels as instruments in each period
+
+Arellano-Bover/Blundell-Bond system GMM adds the available lagged differences
 
 
 # Examining the time series
