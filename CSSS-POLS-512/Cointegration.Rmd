@@ -1,0 +1,323 @@
+---
+title: 'CSSS 512: Lab 4'
+output:
+  beamer_presentation
+date: "2018-4-27"
+subtitle: Cointegration Analysis
+---
+
+# Cointegration Analysis
+
+So far, we have been examining a single time series with covariates (e.g. traffic accidents and seat belt law). This assumes that there is no feedback between variables.\newline
+
+Yet, we may be interested in the relationship between two potentially nonstationary time series that influence each other. \newline
+
+Cointegration analysis allows us to examine the short-run and long-run relationships between two nonstationary time series. \newline
+
+Key intuition: there is some combination of the nonstationary time series that yields an error term that is stationary, so that shocks are not permanent and the system holds its equilibrium.
+
+# Cointegration Analysis
+\small
+
+Consider two time series $y_t$ and $x_t$:
+
+$$x_t = x_{t-1}+\epsilon_{t} $$
+$$y_t = y_{t-1} + 0.6x_t + \nu_t$$
+
+where $\epsilon_t$ and $\nu_t$ are white noise. $x_t$ and $y_t$ are both AR(1) processes, random walks, non-stationary, and I(1). \newline
+
+They are causally connected, and neither tends toward any particular level, but each tends toward the other. A large $\nu_t$ may move $y_t$ away from $x_t$ briefly, but eventually, $y_t$ will move back to $x_t$'s level. Think: drunkard and puppy. 
+
+The two time series may be in equilibrium in the long run but in the short run the two series deviate from that equilibrium. They will move together indefinitely. $x_t$ and $y_t$ are said to be cointegrated. 
+
+Shocks that persist over a single period are reequilibriated or adjusted by the cointegrating relationship.
+
+# Cointegration Analysis
+
+\includegraphics[scale=0.45]{cointegrated.pdf}
+
+# Cointegration Analysis
+\small
+
+Cointegration allows for us to acknowledge that two nonstationary time series may be related in multiple ways: in the short-run and in the long-run. \newline
+
+Examples of cointegrated time series:
+
+1. crime rates and immigration rates
+
+2. presidential approval and inflation
+
+3. demand for money, interest rates, income, and prices
+
+Justification:
+
+Differencing nonstationary time series eliminates the possibility of capturing long run relationships. However, ignoring nonstationarity can uncover spurious relationships. 
+
+We want to examine nonstationary time series by allowing for the possibility of long-run relationships while also investigating whether short-run perturbations are related.
+
+# Cointegration Analysis
+
+Cointegration means that a specific combination of two nonstationary series may be stationary. The vector(s) that defines the stationary linear combination is called the cointegrating vector. 
+
+Specifically, two or more variables $y_t$, $x_t$ are cointegrated if
+
+1. Each of the variables is I(d), d $\geq$ 1, usually I(1).
+
+2. There is some cointegrating vector, $\boldsymbol{\alpha}$, such that
+$$z_t = [y_t, x_t]'\boldsymbol{\alpha}$$
+$$z_t \sim I(0)$$
+
+In other words, there is some linear combination of the non-stationary variables that is stationary.
+
+# Cointegration Analysis
+
+\textbf{Steps:}
+
+1. Determine whether the individual time series are stationary \newline
+
+2. If the series are non-stationary, then find out if they are cointegrated: if there is a linear combination of the series that is stationary \newline
+
+3. Fit an error correction model: Engle-Granger Two-Step or Johanson Estimator \newline
+
+
+# Engle-Granger Two-Step 
+
+Assume we have ascertained that the individual time series are non-stationary. Now, we can test for cointegration. 
+
+\textbf{Step 1:}
+
+Estimate the following using linear regression (no constant):
+
+$$y_t = x_t\beta+\epsilon_t$$
+The residuals, $\hat{\epsilon_t}$, should be stationary if $x$ and $y$ are cointegrated. \newline
+
+We test to see if $\hat{\epsilon_t}$ is stationary. It takes the form of a unit root test:
+$$\Delta\hat{\epsilon_t}=\alpha_1\hat{\epsilon}_{t-1}+z_t$$
+
+We are interested in whether $\alpha_1=0$. Rejecting the null means that the residuals series is stationary. 
+
+# Engle-Granger Two-Step
+
+\textbf{Step 2:}
+
+Estimate the Error Correction Model
+
+$$\Delta y_t = \psi_0 + \gamma_1\hat{\epsilon}_{t-1}+\sum^J_{j=1}\psi_{1j}\Delta x_{t-j}+\sum^K_{k=1}\psi_{2k}\Delta y_{t-k} + u_t$$
+$$\Delta x_t = \zeta_0 + \gamma_2\hat{\epsilon}_{t-1}+\sum^J_{j=1}\zeta_{1j}\Delta y_{t-j}+\sum^K_{k=1}\zeta_{2k}\Delta x_{t-k} + v_t$$
+The key terms to note at are the $\hat{\epsilon_t}$ from our previous step.
+
+This gives us $\Delta y_t$ as a function of its lags, the lags of $\Delta x_t$, and the error of the long-run equilibrium, $\epsilon_{t-1}$.
+
+A negative $\gamma$ shows us how quickly $y_t$ reverses back to $x_t$. Larger negative values of $\gamma$ mean fast adjustment back to equilibrium. It is called the \textit{speed of adjustment parameter}.
+
+# Engle-Granger Two Step
+
+\scriptsize
+```{r warning=FALSE, message=FALSE}
+rm(list=ls())
+
+#Load libraries
+library(tseries)           # For unit root tests
+library(forecast)		       # For decompose()
+library(lmtest)            # For Breusch-Godfrey LM test of serial correlation
+library(urca)              # For estimating cointegration models
+library(simcf)             # For counterfactual simulation via ldvsimev()
+library(MASS)              # For mvrnorm()
+library(RColorBrewer)      # For nice colors
+library(Zelig)			       # For approval data
+library(quantmod)		       # For creating lags
+
+data(approval)
+attach(approval)
+
+phony <- rnorm(length(approve))
+for (i in 2:length(phony)){
+    phony[i] <- phony[i-1] + rnorm(1) 
+}
+```
+
+
+# Engle-Granger Two Step
+\scriptsize
+```{r warning=FALSE, message=FALSE}
+
+set.seed(123456)
+
+# Generate cointegrated data
+e1 <- rnorm(100)
+e2 <- rnorm(100)
+x <- cumsum(e1)
+y <- 0.6*x + e2
+
+#Run step 1 of the Engle-Granger two step
+coint.reg <- lm(y ~ x -1)				
+#Estimate the cointegration vector by least squares with no constant
+coint.err <- residuals(coint.reg)		
+#This gives us the cotingeration vector
+
+#Check for stationarity of the cointegration vector
+punitroot(adf.test(coint.err)$statistic, trend="nc")
+
+#Make the lag of the cointegration error term
+coint.err.lag <- coint.err[1:(length(coint.err)-2)]
+```
+
+# Engle-Granger Two Step
+\scriptsize
+```{r warning=FALSE, message=FALSE}
+
+#Make the difference of y and x
+dy <- diff(y)
+dx <- diff(x)
+
+#And their lags
+dy.lag <- dy[1:(length(dy)-1)]
+dx.lag <- dx[1:(length(dx)-1)]
+
+#Delete the first dy, because we are missing lags for this obs
+dy <- dy[2:length(dy)]
+
+
+```
+
+
+# Engle-Granger Two Step
+\tiny
+```{r warning=FALSE, message=FALSE}
+ #Estimate an Error Correction Model with LS
+ecm1 <- lm(dy ~ coint.err.lag + dy.lag + dx.lag)
+summary(ecm1)
+
+```
+
+
+# Johansen Estimator
+
+The second approach to cointegration analysis is the Johansen method estimated via ML. \newline
+
+The Johansen method does not rely on an arbitrary choice of specification for the cointegrating vector. It also identifies multiple cointegrating vectors in the case of three or more variables. \newline
+
+The Johansen method gives us test statistics on the possible number of cointegrating vectors. \newline
+
+As with Engle-Granger, lag lengths can be determined by information criteria or the shortest lag length that results in serially uncorrelated residuals. 
+
+
+# Johansen Estimator
+\
+```{r warning=FALSE, message=FALSE}
+
+#Alternatively, we can use the Johansen estimator
+#Create a matrix of the cointegrated variables
+cointvars <- cbind(y,x)
+# Perform cointegration tests
+coint.test1 <- ca.jo(cointvars,
+                   ecdet = "const",
+                   type="eigen",
+                   K=2,
+                   spec="longrun")
+
+```
+
+
+# Johansen Estimator
+\tiny
+
+```{r warning=FALSE, message=FALSE}
+
+summary(coint.test1)
+
+```
+
+# Johansen Estimator
+\scriptsize
+```{r warning=FALSE, message=FALSE}
+
+ecm.res1 <- cajorls(coint.test1,
+                    r = 1,           # Cointegration rank
+                    reg.number = 1)  # which variable(s) to put on LHS
+#(column indexes of cointvars)
+summary(ecm.res1)
+```
+
+# Johansen Estimator
+\scriptsize
+```{r warning=FALSE, message=FALSE}
+
+#For the presidential approval example, use an ECM equivalent to the
+#ARIMA(1,0,1) model that we chose earlier
+
+cointvars <- cbind(approve,avg.price)
+ecm.test1 <- ca.jo(cointvars,
+                   ecdet = "const",
+                   type="eigen",
+                   K=2,
+                   spec="longrun",
+                   dumvar=cbind(sept.oct.2001,iraq.war)
+                   )
+
+```
+
+
+# Johansen Estimator
+\tiny
+```{r warning=FALSE, message=FALSE}
+
+summary(ecm.test1)
+
+```
+
+# Johansen Estimator
+\tiny
+```{r warning=FALSE, message=FALSE}
+
+ecm.res1 <- cajorls(ecm.test1,
+                    r = 1,
+                    reg.number = 1)
+summary(ecm.res1$rlm)
+```
+
+# Johansen Estimator
+\tiny
+```{r warning=FALSE, message=FALSE}
+
+ecm.res1 <- cajorls(ecm.test1,
+                    r = 1,
+                    reg.number = 1)
+summary(ecm.res1$rlm)
+```
+
+# Johansen Estimator
+\scriptsize
+```{r warning=FALSE, message=FALSE}
+
+#Cointegration analysis with a spurious regressor
+cointvars <- cbind(approve,avg.price,phony)
+
+ecm.test1 <- ca.jo(cointvars,
+                   ecdet = "const",
+                   type="eigen",
+                   K=2,
+                   spec="longrun",
+                   dumvar=cbind(sept.oct.2001,iraq.war)
+                   )
+
+```
+
+
+# Johansen Estimator
+\tiny
+```{r warning=FALSE, message=FALSE}
+
+summary(ecm.test1)
+
+```
+
+# Johansen Estimator
+\tiny
+```{r warning=FALSE, message=FALSE}
+
+ecm.res1 <- cajorls(ecm.test1,
+                    r = 1,
+                    reg.number = 1)
+summary(ecm.res1$rlm) 
+```
