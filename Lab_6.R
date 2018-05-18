@@ -1,6 +1,6 @@
 ########################################################################################################
 #CSSS 594
-#Lab Sessions 5-6 - Dynamic Panel Data Models (Arellano-Bond, etc. for fixed effects in short-T panels)
+#Lab Sessions 6 - Dynamic Panel Data Models (Arellano-Bond, etc. for fixed effects in short-T panels)
 #5/14/15
 
 # Christopher Adolph   faculty.washington.edu/cadolph
@@ -9,8 +9,6 @@
 
 # Clear memory
 rm(list=ls())
-
-setwd("~/desktop")
 
 # Load libraries
 library(plm)            # Econometrics package for linear panel models
@@ -53,8 +51,6 @@ attach(data)
 
 ########################################################################################################
 #Examine the time series plots, ACFs, and PACFs for cigarette consumption 
-
-setwd("~/desktop/plots")
 
 statelist <- unique(state)
 

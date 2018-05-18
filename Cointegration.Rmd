@@ -8,7 +8,7 @@ subtitle: Cointegration Analysis
 
 # Cointegration Analysis
 
-So far, we have been examining a single time series conditional upon some covariates (e.g. traffic accidents and seat belt law). We have been assuming that there is no feedback between variables.\newline
+So far, we have been examining a single time series conditioned upon some covariates (e.g. traffic accidents and seat belt law). We have been assuming that there is no feedback between variables.\newline
 
 Yet, we may be interested in the relationship between two potentially nonstationary time series that influence each other. \newline
 
@@ -24,7 +24,7 @@ Consider two time series $y_t$ and $x_t$:
 $$x_t = x_{t-1}+\epsilon_{t} $$
 $$y_t = y_{t-1} + 0.6x_t + \nu_t$$
 
-where $\epsilon_t$ and $\nu_t$ are white noise. $x_t$ and $y_t$ are both AR(1) processes, random walks, non-stationary, and I(1). \newline
+where $\epsilon_t$ and $\nu_t$ are white noise. $x_t$ and $y_t$ are both AR(1) processes, random walks, non-stationary, and I(1). 
 
 They are causally connected, and neither tends toward any particular level, but each tends toward the other. A large $\nu_t$ may move $y_t$ away from $x_t$ briefly, but eventually, $y_t$ will move back to $x_t$'s level. Think: drunkard and puppy. 
 

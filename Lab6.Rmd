@@ -54,7 +54,7 @@ Furthermore,
 
 Increasing $N$ does not mitigate the problem. Purging serial correlation in the errors or getting the specification right (including other regressors) also doesn't solve the problem.
 
-# Dynamic panel data models
+# Instrumental variables
 
 We therefore turn to instrumental variables. 
  
@@ -63,32 +63,48 @@ Recall that an instrumental variable must fulfill two conditions: 1) it is corre
 $$y_{it} - \bar{y_i} = \phi(y_{it-1} - \bar{y_i})+(x_{it}-\bar{x}_{it})\beta+(\epsilon_{it}-\bar{\epsilon}_{it})$$ 
 $$\Delta y_{it} = \phi \Delta y_{it-1} + \Delta x_{it}\beta + \Delta \epsilon_{it}$$
 
-We use lagged levels and lagged differences of $\Delta y_{it}$ as instruments for the LDV. These help to predict $\Delta y_{it}$ but not $\Delta \epsilon_{it}$ if the errors are iid (see lecture slides for why). 
+We use lagged levels and lagged differences of $\Delta y_{it}$ as instruments for the LDV. These help to predict $\Delta y_{it}$ but not $\Delta \epsilon_{it}$ if the errors are iid (see lecture slides for why). \newline
 
 Note: This is different than instrumenting $x_{it}$. We are not addressing the endogeneity that may exist there. One should not be conflated with the other.
 
-# Dynamic panel data models
+# Generalized Method of Moments
 
-Estimation is done using GMM.
+Estimation is done using GMM. The usual IV approach cannot handle the number of instruments. 
 
-$$y_t = \boldsymbol{x}_t\boldsymbol{\beta} + e_t$$
+To give a brief overview of the intuition behind GMM, consider a linear model:
+$$y_t = \boldsymbol{x}_t \boldsymbol{\beta} + e_t$$
+Recall that the following condition holds under Gauss-Markov. 
 $$E[\boldsymbol{x}_t\epsilon_t]=0$$
+Assume there exists some combination instrumental variables $\boldsymbol{z}_t$ that implies the following:
 $$E[\boldsymbol{z}_t\epsilon_t] = E[\boldsymbol{z}_t(y_t-\boldsymbol{x}_t\boldsymbol{\beta})]=0$$
-$$\frac{1}{n}\sum^n_{t=1}\boldsymbol{z}_t(y-\boldsymbol{x_t}\boldsymbol{\beta})$$
+Intuition: GMM attempts to find the $\boldsymbol{\beta}$ that makes this true.
 
-$$\boldsymbol{S}_{zy}-\boldsymbol{S}_{zx}\boldsymbol{\beta}=0$$
-$$\boldsymbol{S}_{xy}=n^{-1}\sum^n_{t=1}\boldsymbol{x}_t y_{t} \; \text{and} \; \boldsymbol{S}_{zx}=n^{-1}\sum^n_{t=1}\boldsymbol{z}_t x_{t}$$
+# Generalized method of moments
+Population moment:
+$$E[\boldsymbol{z}_t(y_t-\boldsymbol{x}_t\boldsymbol{\beta})]=0$$
+Sample moments:
+$$\frac{1}{n}\sum^n_{t=1}\boldsymbol{z}_t(y-\boldsymbol{x_t}\boldsymbol{\beta})$$
 $$\substack{\frac{1}{n}\sum^n_{t=1}z_{1t}(y-\boldsymbol{x}_t \boldsymbol{\beta})\\
 \vdots\\
 \frac{1}{n}\sum^n_{t=1}z_{Kt}(y-\boldsymbol{x}_t \boldsymbol{\beta})
 }$$
-Can be solved analytically. But can use iterative search to find the betas and phis.
+We therefore have
+$$\boldsymbol{S}_{zy}-\boldsymbol{S}_{zx}\boldsymbol{\beta}=0 \;\;\; \text{where}$$
+$$\boldsymbol{S}_{xy}=n^{-1}\sum^n_{t=1}\boldsymbol{x}_t y_{t} \;\;\; \text{and} \;\;\; \boldsymbol{S}_{zx}=n^{-1}\sum^n_{t=1}\boldsymbol{z}_t x_{t}$$
+We solve for
+$$\hat{\boldsymbol{\beta}}=\boldsymbol{S}^{-1}_{zx}\boldsymbol{S}_{xy}$$
 
-Anderson-Hsiao: uses the twice and third lagged levels as instruments.
+# Generalized method of moments
 
-Arellano-Bond Difference GMM uses changes in y as outcome and all available lagged levels as instruments in each period
+$$\hat{\boldsymbol{\beta}}=\boldsymbol{S}^{-1}_{zx}\boldsymbol{S}_{xy}$$
 
-Arellano-Bover/Blundell-Bond system GMM adds the available lagged differences
+Can be solved analytically. But we can also use an iterative search. \newline
+
+\textbf{Anderson-Hsiao estimator}: uses the twice and third lagged levels as instruments. \newline
+
+\textbf{Arellano-Bond Difference GMM}: uses $\Delta y$ as the outcome and all available lagged levels as instruments in each period. \newline
+
+\textbf{Arellano-Bover/Blundell-Bond System GMM}: adds the available lagged differences as instruments. \newline
 
 
 # Examining the time series
