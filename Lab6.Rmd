@@ -20,7 +20,7 @@ subtitle: Panel Data Models with Few Time Periods
 
 # Nickell bias
 
-Recall that we can remove fixed effects by differencing (different from first differencing):
+Recall that we can remove fixed effects by differencing:
 
 $$y_{it}= \phi y_{it-1} + \alpha_i + \epsilon_{it}$$
 $$y_{it} - \bar{y_i} = \phi(y_{it-1} - \bar{y_i})+(x_{it}-\bar{x}_{it})\beta+(\epsilon_{it}-\bar{\epsilon}_{it})$$ 
@@ -36,9 +36,9 @@ However, we introduce bias when we difference the model in this way.
 
 $$y_{it} - \bar{y_i} = \phi(y_{it-1} - \bar{y_i})+(x_{it}-\bar{x}_{it})\beta+(\epsilon_{it}-\bar{\epsilon}_{it})$$ 
 
-This is because $\bar{y}_i$ is computed using all the past $y$'s. This is correlated with $\bar{\epsilon}_{it}$, which is computed using all the past $\epsilon$'s \newline
+This is because $\bar{y}_i$ is computed using the past $y$'s. This is correlated with $\bar{\epsilon}_{it}$, which is computed using the past $\epsilon$'s \newline
 
-Specifically, this creates bias in the LDV (think conditional mean zero assumption). If the other regressors are correlated with the LDV, then their coefficients may also be seriously biased. \newline
+Specifically, this creates bias in the LDV. If the other regressors are correlated with the LDV, then their coefficients may also be seriously biased. \newline
 
 # Nickell bias
 
