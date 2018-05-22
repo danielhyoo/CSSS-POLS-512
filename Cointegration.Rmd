@@ -41,7 +41,7 @@ Shocks that persist over a single period are reequilibriated or adjusted by the 
 
 Cointegration allows for us to acknowledge that two nonstationary time series may be related in multiple ways: in the short-run and in the long-run. \newline
 
-Examples of cointegrated time series:
+Past studies of cointegrated time series:
 
 1. crime rates and immigration rates
 
@@ -236,7 +236,7 @@ ecm.res1 <- cajorls(coint.test1,
                     r = 1,           # Cointegration rank
                     reg.number = 1)  # which variable(s) to put on LHS
 #(column indexes of cointvars)
-summary(ecm.res1)
+ecm.res1
 ```
 
 # Johansen Estimator

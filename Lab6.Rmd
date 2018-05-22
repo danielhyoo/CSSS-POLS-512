@@ -90,7 +90,7 @@ $$\substack{\frac{1}{n}\sum^n_{t=1}z_{1t}(y-\boldsymbol{x}_t \boldsymbol{\beta})
 }$$
 We therefore have
 $$\boldsymbol{S}_{zy}-\boldsymbol{S}_{zx}\boldsymbol{\beta}=0 \;\;\; \text{where}$$
-$$\boldsymbol{S}_{xy}=n^{-1}\sum^n_{t=1}\boldsymbol{x}_t y_{t} \;\;\; \text{and} \;\;\; \boldsymbol{S}_{zx}=n^{-1}\sum^n_{t=1}\boldsymbol{z}_t x_{t}$$
+$$\boldsymbol{S}_{zy}=n^{-1}\sum^n_{t=1}\boldsymbol{z}_t y_{t} \;\;\; \text{and} \;\;\; \boldsymbol{S}_{zx}=n^{-1}\sum^n_{t=1}\boldsymbol{z}_t x_{t}$$
 We solve for
 $$\hat{\boldsymbol{\beta}}=\boldsymbol{S}^{-1}_{zx}\boldsymbol{S}_{xy}$$
 
